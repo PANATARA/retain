@@ -1,4 +1,5 @@
 import 'review_intervals.dart';
+import 'sleep_schedule.dart';
 
 class Topic {
   final String id;
@@ -35,7 +36,7 @@ class Topic {
   }
 
   /// Advances the review step or marks completed if at step 4.
-  Topic markReviewed({DateTime? reviewedAt}) {
+  Topic markReviewed({DateTime? reviewedAt, SleepSchedule? sleepSchedule}) {
     final now = reviewedAt ?? DateTime.now();
     if (currentStep >= ReviewIntervals.totalSteps - 1) {
       // Completed step 4 (30 days) -> Mark completed!
@@ -44,7 +45,11 @@ class Topic {
       );
     } else {
       final nextStep = currentStep + 1;
-      final nextTime = ReviewIntervals.calculateNextReview(nextStep, baseTime: now);
+      final nextTime = ReviewIntervals.calculateNextReview(
+        nextStep,
+        baseTime: now,
+        sleepSchedule: sleepSchedule,
+      );
       return copyWith(
         currentStep: nextStep,
         nextReviewAt: nextTime,
@@ -54,11 +59,15 @@ class Topic {
   }
 
   /// Resets review progress back to Step 0 (+20 minutes).
-  Topic resetProgress({DateTime? resetAt}) {
+  Topic resetProgress({DateTime? resetAt, SleepSchedule? sleepSchedule}) {
     final now = resetAt ?? DateTime.now();
     return copyWith(
       currentStep: 0,
-      nextReviewAt: ReviewIntervals.calculateNextReview(0, baseTime: now),
+      nextReviewAt: ReviewIntervals.calculateNextReview(
+        0,
+        baseTime: now,
+        sleepSchedule: sleepSchedule,
+      ),
       isCompleted: false,
     );
   }

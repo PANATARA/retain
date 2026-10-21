@@ -183,4 +183,108 @@ class AdaptiveDialogs {
       );
     }
   }
+
+  /// Shows an adaptive time picker (Cupertino sheet on iOS, Material 3 dialog on Android).
+  static Future<TimeOfDay?> showAdaptiveTimePicker({
+    required BuildContext context,
+    required TimeOfDay initialTime,
+    String title = 'Время',
+    String confirmLabel = 'Готово',
+    String cancelLabel = 'Отмена',
+  }) async {
+    if (isApple(context)) {
+      TimeOfDay selected = initialTime;
+      final isDark = Theme.of(context).brightness == Brightness.dark;
+
+      final result = await showCupertinoModalPopup<TimeOfDay>(
+        context: context,
+        builder: (ctx) {
+          return Container(
+            height: 290,
+            decoration: BoxDecoration(
+              color: isDark ? const Color(0xFF1E2029) : Colors.white,
+              borderRadius:
+                  const BorderRadius.vertical(top: Radius.circular(22)),
+            ),
+            child: SafeArea(
+              top: false,
+              child: Column(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 16, vertical: 10),
+                    decoration: BoxDecoration(
+                      border: Border(
+                        bottom: BorderSide(
+                          color: isDark ? Colors.white12 : Colors.black12,
+                          width: 0.5,
+                        ),
+                      ),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        CupertinoButton(
+                          padding: EdgeInsets.zero,
+                          child: Text(cancelLabel,
+                              style: const TextStyle(fontSize: 16)),
+                          onPressed: () => Navigator.of(ctx).pop(null),
+                        ),
+                        Text(
+                          title,
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                            color: isDark ? Colors.white : Colors.black87,
+                            decoration: TextDecoration.none,
+                          ),
+                        ),
+                        CupertinoButton(
+                          padding: EdgeInsets.zero,
+                          child: Text(
+                            confirmLabel,
+                            style: const TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                          onPressed: () => Navigator.of(ctx).pop(selected),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Expanded(
+                    child: CupertinoDatePicker(
+                      mode: CupertinoDatePickerMode.time,
+                      use24hFormat:
+                          MediaQuery.of(context).alwaysUse24HourFormat,
+                      initialDateTime: DateTime(
+                        2026,
+                        1,
+                        1,
+                        initialTime.hour,
+                        initialTime.minute,
+                      ),
+                      onDateTimeChanged: (DateTime newDateTime) {
+                        selected = TimeOfDay(
+                          hour: newDateTime.hour,
+                          minute: newDateTime.minute,
+                        );
+                      },
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        },
+      );
+      return result;
+    } else {
+      return showTimePicker(
+        context: context,
+        initialTime: initialTime,
+      );
+    }
+  }
 }

@@ -5,6 +5,7 @@ import '../l10n/app_strings.dart';
 import '../models/app_data.dart';
 import '../models/category.dart';
 import '../models/review_intervals.dart';
+import '../models/sleep_schedule.dart';
 import '../models/topic.dart';
 import '../services/notification_service.dart';
 import '../services/storage_service.dart';
@@ -27,6 +28,7 @@ class PlannerState extends ChangeNotifier {
   String _themeMode = 'system';
   String _language = 'en'; // Default English as requested
   bool _hasSeenOnboarding = false;
+  SleepSchedule _sleepSchedule = const SleepSchedule();
   bool _isLoading = true;
   String? _errorMessage;
 
@@ -36,6 +38,7 @@ class PlannerState extends ChangeNotifier {
   String get themeMode => _themeMode;
   String get language => _language;
   bool get hasSeenOnboarding => _hasSeenOnboarding;
+  SleepSchedule get sleepSchedule => _sleepSchedule;
   bool get isLoading => _isLoading;
   String? get errorMessage => _errorMessage;
 
@@ -114,6 +117,7 @@ class PlannerState extends ChangeNotifier {
       _themeMode = data.themeMode;
       _language = data.language;
       _hasSeenOnboarding = data.hasSeenOnboarding;
+      _sleepSchedule = data.sleepSchedule;
 
       // Sync active notifications
       await _syncNotifications();
@@ -144,6 +148,7 @@ class PlannerState extends ChangeNotifier {
       themeMode: _themeMode,
       language: _language,
       hasSeenOnboarding: _hasSeenOnboarding,
+      sleepSchedule: _sleepSchedule,
       categories: _categories,
       topics: _topics,
     );
@@ -155,6 +160,40 @@ class PlannerState extends ChangeNotifier {
   Future<void> completeOnboarding() async {
     _hasSeenOnboarding = true;
     await _persist();
+    notifyListeners();
+  }
+
+  Future<void> updateSleepSchedule({
+    bool? isEnabled,
+    int? startHour,
+    int? startMinute,
+    int? endHour,
+    int? endMinute,
+  }) async {
+    _sleepSchedule = _sleepSchedule.copyWith(
+      isEnabled: isEnabled,
+      startHour: startHour,
+      startMinute: startMinute,
+      endHour: endHour,
+      endMinute: endMinute,
+    );
+
+    // If enabled, adjust any future reviews that fall in the sleep hours
+    if (_sleepSchedule.isEnabled) {
+      final now = DateTime.now();
+      for (int i = 0; i < _topics.length; i++) {
+        final t = _topics[i];
+        if (!t.isCompleted && t.nextReviewAt.isAfter(now)) {
+          if (_sleepSchedule.isSleepingAt(t.nextReviewAt)) {
+            final adjusted = _sleepSchedule.adjust(t.nextReviewAt);
+            _topics[i] = t.copyWith(nextReviewAt: adjusted);
+          }
+        }
+      }
+    }
+
+    await _persist();
+    await _syncNotifications();
     notifyListeners();
   }
 
@@ -235,7 +274,11 @@ class PlannerState extends ChangeNotifier {
     required String title,
   }) async {
     final now = DateTime.now();
-    final firstReview = ReviewIntervals.calculateNextReview(0, baseTime: now);
+    final firstReview = ReviewIntervals.calculateNextReview(
+      0,
+      baseTime: now,
+      sleepSchedule: _sleepSchedule,
+    );
 
     final newTopic = Topic(
       id: _uuid.v4(),
@@ -269,7 +312,7 @@ class PlannerState extends ChangeNotifier {
     if (index == -1) return;
 
     final current = _topics[index];
-    final updated = current.markReviewed();
+    final updated = current.markReviewed(sleepSchedule: _sleepSchedule);
     _topics[index] = updated;
 
     await _persist();
@@ -297,7 +340,7 @@ class PlannerState extends ChangeNotifier {
     if (index == -1) return;
 
     final current = _topics[index];
-    final reset = current.resetProgress();
+    final reset = current.resetProgress(sleepSchedule: _sleepSchedule);
     _topics[index] = reset;
 
     await _persist();
@@ -371,6 +414,7 @@ class PlannerState extends ChangeNotifier {
     _themeMode = imported.themeMode;
     _language = imported.language;
     _hasSeenOnboarding = imported.hasSeenOnboarding;
+    _sleepSchedule = imported.sleepSchedule;
 
     await _syncNotifications();
     notifyListeners();

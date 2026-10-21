@@ -6,7 +6,7 @@ class AppStrings {
   bool get isRussian => languageCode == 'ru';
 
   // App General
-  String get appName => 'Ebbinghaus Planner';
+  String get appName => 'Retain';
 
   // Dashboard
   String get today => isRussian ? 'Сегодня' : 'Today';
@@ -147,6 +147,23 @@ class AppStrings {
   String get languageSection => isRussian ? 'ЯЗЫК ИНТЕРФЕЙСА' : 'LANGUAGE';
   String get englishLang => 'English';
   String get russianLang => 'Русский';
+  // Sleep Schedule
+  String get sleepScheduleSection => isRussian ? 'РЕЖИМ СНА И ТИХИЕ ЧАСЫ' : 'SLEEP SCHEDULE & QUIET HOURS';
+  String get sleepScheduleTitle => isRussian ? 'График сна' : 'Sleep Schedule';
+  String get sleepScheduleSubtitle => isRussian
+      ? 'Переносить ночные повторения на утро'
+      : 'Postpone nighttime reviews to morning';
+  String get sleepScheduleDesc => isRussian
+      ? 'Повторения, выпадающие на время сна, автоматически переносятся на утро (время подъёма), чтобы уведомления не беспокоили вас ночью.'
+      : 'Reviews falling during sleep hours will be automatically moved to your wake-up time so you are not disturbed at night.';
+  String get bedtimeTitle => isRussian ? 'Отбой' : 'Bedtime';
+  String get bedtimeSubtitle => isRussian ? 'Начало тихого времени' : 'Quiet hours begin';
+  String get wakeUpTitle => isRussian ? 'Подъём' : 'Wake Up';
+  String get wakeUpSubtitle => isRussian ? 'Время утренних повторений' : 'Morning review time';
+  String get selectBedtime => isRussian ? 'Время отбоя' : 'Select Bedtime';
+  String get selectWakeUp => isRussian ? 'Время подъёма' : 'Select Wake Up';
+
+  // Backup & Restore
   String get backupSection => isRussian ? 'РЕЗЕРВНОЕ КОПИРОВАНИЕ' : 'BACKUP & RESTORE';
   String get exportBackup => isRussian ? 'Экспорт резервной копии (JSON)' : 'Export Backup (JSON)';
   String get exportBackupSubtitle => isRussian
@@ -161,7 +178,7 @@ class AppStrings {
       ? 'ИНТЕРВАЛЫ ПОВТОРЕНИЙ ЭББИНГАУЗА'
       : 'EBBINGHAUS FORGETTING CURVE';
   String get welcomeGuideAction => isRussian ? 'Инструкция и методология' : 'How it works / Welcome Guide';
-  String get versionInfo => 'Ebbinghaus Planner v1.2';
+  String get versionInfo => 'Retain v1.0.0';
 
   // Common Dialogs
   String get cancel => isRussian ? 'Отмена' : 'Cancel';
@@ -175,14 +192,14 @@ class AppStrings {
       : 'Selected file is corrupted or has an invalid format: $e';
 
   // Notification
-  String get notificationTitle => 'Ebbinghaus Planner';
+  String get notificationTitle => 'Retain';
   String notificationBody({required String topicTitle, required String categoryTitle}) =>
       isRussian
           ? 'Время закрепить: $topicTitle из раздела $categoryTitle'
           : 'Time to review: $topicTitle from $categoryTitle';
 
   // Onboarding / Welcome Screen
-  String get welcomeTitle => isRussian ? 'Добро пожаловать в Ebbinghaus Planner' : 'Welcome to Ebbinghaus Planner';
+  String get welcomeTitle => isRussian ? 'Добро пожаловать в Retain' : 'Welcome to Retain';
   String get welcomeSubtitle => isRussian
       ? 'Интервальные повторения для надежного долговременного запоминания'
       : 'Master long-term memory with scientific spaced repetition';

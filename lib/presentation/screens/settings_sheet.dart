@@ -316,6 +316,164 @@ class _SettingsSheetState extends State<SettingsSheet> {
 
             const SizedBox(height: 24),
 
+            // Sleep Schedule & Quiet Hours Section
+            Text(
+              s.sleepScheduleSection,
+              style: TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
+                letterSpacing: 0.8,
+                color: isDark ? Colors.white38 : Colors.black45,
+              ),
+            ),
+            const SizedBox(height: 10),
+
+            AppleCard(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Main Toggle
+                  Row(
+                    children: [
+                      Container(
+                        width: 40,
+                        height: 40,
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFB8A9F8).withValues(
+                            alpha: isDark ? 0.22 : 0.15,
+                          ),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Icon(
+                          isApple ? CupertinoIcons.moon_stars_fill : Icons.bedtime,
+                          color: const Color(0xFFB8A9F8),
+                          size: 20,
+                        ),
+                      ),
+                      const SizedBox(width: 14),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              s.sleepScheduleTitle,
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                                color: isDark ? Colors.white : const Color(0xFF1C1C1E),
+                              ),
+                            ),
+                            const SizedBox(height: 2),
+                            Text(
+                              s.sleepScheduleSubtitle,
+                              style: TextStyle(
+                                fontSize: 13,
+                                color: isDark ? Colors.white54 : Colors.black54,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      if (isApple)
+                        CupertinoSwitch(
+                          value: state.sleepSchedule.isEnabled,
+                          activeTrackColor: const Color(0xFFB8A9F8),
+                          onChanged: (val) {
+                            state.updateSleepSchedule(isEnabled: val);
+                          },
+                        )
+                      else
+                        Switch(
+                          value: state.sleepSchedule.isEnabled,
+                          activeThumbColor: const Color(0xFFB8A9F8),
+                          onChanged: (val) {
+                            state.updateSleepSchedule(isEnabled: val);
+                          },
+                        ),
+                    ],
+                  ),
+
+                  if (state.sleepSchedule.isEnabled) ...[
+                    const SizedBox(height: 16),
+                    Divider(
+                      height: 1,
+                      color: isDark ? Colors.white12 : Colors.black12,
+                    ),
+                    const SizedBox(height: 12),
+
+                    // Bedtime tile
+                    _TimePickerRow(
+                      icon: isApple ? CupertinoIcons.moon_fill : Icons.nightlight_round,
+                      iconColor: const Color(0xFFD0A2E2),
+                      title: s.bedtimeTitle,
+                      subtitle: s.bedtimeSubtitle,
+                      timeFormatted: state.sleepSchedule.startTimeFormatted,
+                      onTap: () async {
+                        final picked = await AdaptiveDialogs.showAdaptiveTimePicker(
+                          context: context,
+                          initialTime: TimeOfDay(
+                            hour: state.sleepSchedule.startHour,
+                            minute: state.sleepSchedule.startMinute,
+                          ),
+                          title: s.selectBedtime,
+                          confirmLabel: s.save,
+                          cancelLabel: s.cancel,
+                        );
+                        if (picked != null) {
+                          state.updateSleepSchedule(
+                            startHour: picked.hour,
+                            startMinute: picked.minute,
+                          );
+                        }
+                      },
+                    ),
+
+                    const SizedBox(height: 10),
+
+                    // Wake-up tile
+                    _TimePickerRow(
+                      icon: isApple ? CupertinoIcons.sun_max_fill : Icons.wb_sunny_rounded,
+                      iconColor: const Color(0xFFF8B182),
+                      title: s.wakeUpTitle,
+                      subtitle: s.wakeUpSubtitle,
+                      timeFormatted: state.sleepSchedule.endTimeFormatted,
+                      onTap: () async {
+                        final picked = await AdaptiveDialogs.showAdaptiveTimePicker(
+                          context: context,
+                          initialTime: TimeOfDay(
+                            hour: state.sleepSchedule.endHour,
+                            minute: state.sleepSchedule.endMinute,
+                          ),
+                          title: s.selectWakeUp,
+                          confirmLabel: s.save,
+                          cancelLabel: s.cancel,
+                        );
+                        if (picked != null) {
+                          state.updateSleepSchedule(
+                            endHour: picked.hour,
+                            endMinute: picked.minute,
+                          );
+                        }
+                      },
+                    ),
+
+                    const SizedBox(height: 14),
+                    Text(
+                      s.sleepScheduleDesc,
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: isDark ? Colors.white38 : Colors.black45,
+                        height: 1.35,
+                      ),
+                    ),
+                  ],
+                ],
+              ),
+            ),
+
+            const SizedBox(height: 24),
+
             // Backup & Export Section
             Text(
               s.backupSection,
@@ -772,6 +930,108 @@ class _SettingsActionTile extends StatelessWidget {
                   size: 16,
                   color: isDark ? Colors.white30 : Colors.black26,
                 ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _TimePickerRow extends StatelessWidget {
+  final IconData icon;
+  final Color iconColor;
+  final String title;
+  final String subtitle;
+  final String timeFormatted;
+  final VoidCallback onTap;
+
+  const _TimePickerRow({
+    required this.icon,
+    required this.iconColor,
+    required this.title,
+    required this.subtitle,
+    required this.timeFormatted,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isApple = AdaptiveDialogs.isApple(context);
+
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(14),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
+          child: Row(
+            children: [
+              Container(
+                width: 34,
+                height: 34,
+                decoration: BoxDecoration(
+                  color: iconColor.withValues(alpha: isDark ? 0.22 : 0.15),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Icon(icon, color: iconColor, size: 18),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      title,
+                      style: TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.w600,
+                        color: isDark ? Colors.white : const Color(0xFF1C1C1E),
+                      ),
+                    ),
+                    const SizedBox(height: 1),
+                    Text(
+                      subtitle,
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: isDark ? Colors.white54 : Colors.black54,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                decoration: BoxDecoration(
+                  color: isDark
+                      ? Colors.white.withValues(alpha: 0.08)
+                      : Colors.black.withValues(alpha: 0.05),
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(
+                    color: isDark
+                        ? Colors.white.withValues(alpha: 0.12)
+                        : Colors.black.withValues(alpha: 0.08),
+                    width: 0.8,
+                  ),
+                ),
+                child: Text(
+                  timeFormatted,
+                  style: TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w700,
+                    letterSpacing: 0.2,
+                    color: isDark ? Colors.white : const Color(0xFF1C1C1E),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 4),
+              Icon(
+                isApple ? CupertinoIcons.chevron_forward : Icons.chevron_right,
+                size: 16,
+                color: isDark ? Colors.white30 : Colors.black26,
+              ),
             ],
           ),
         ),

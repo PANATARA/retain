@@ -1,4 +1,5 @@
 import 'category.dart';
+import 'sleep_schedule.dart';
 import 'topic.dart';
 
 enum AppVisualTheme {
@@ -18,6 +19,7 @@ class AppData {
   final String themeMode; // 'system', 'light', 'dark'
   final String language; // 'en' or 'ru' (default 'en')
   final bool hasSeenOnboarding;
+  final SleepSchedule sleepSchedule;
   final List<Category> categories;
   final List<Topic> topics;
 
@@ -27,6 +29,7 @@ class AppData {
     this.themeMode = 'system',
     this.language = 'en',
     this.hasSeenOnboarding = false,
+    this.sleepSchedule = const SleepSchedule(),
     required this.categories,
     required this.topics,
   });
@@ -51,6 +54,7 @@ class AppData {
     String? themeMode,
     String? language,
     bool? hasSeenOnboarding,
+    SleepSchedule? sleepSchedule,
     List<Category>? categories,
     List<Topic>? topics,
   }) {
@@ -60,6 +64,7 @@ class AppData {
       themeMode: themeMode ?? this.themeMode,
       language: language ?? this.language,
       hasSeenOnboarding: hasSeenOnboarding ?? this.hasSeenOnboarding,
+      sleepSchedule: sleepSchedule ?? this.sleepSchedule,
       categories: categories ?? this.categories,
       topics: topics ?? this.topics,
     );
@@ -71,6 +76,7 @@ class AppData {
     'themeMode': themeMode,
     'language': language,
     'hasSeenOnboarding': hasSeenOnboarding,
+    'sleepSchedule': sleepSchedule.toJson(),
     'categories': categories.map((c) => c.toJson()).toList(),
     'topics': topics.map((t) => t.toJson()).toList(),
   };
@@ -89,6 +95,9 @@ class AppData {
       themeMode: json['themeMode'] as String? ?? 'system',
       language: json['language'] as String? ?? 'en',
       hasSeenOnboarding: json['hasSeenOnboarding'] as bool? ?? false,
+      sleepSchedule: SleepSchedule.fromJson(
+        json['sleepSchedule'] as Map<String, dynamic>?,
+      ),
       categories: rawCategories
           .map((item) => Category.fromJson(item as Map<String, dynamic>))
           .toList(),
@@ -105,6 +114,7 @@ class AppData {
       themeMode: 'system',
       language: 'en',
       hasSeenOnboarding: false,
+      sleepSchedule: SleepSchedule(),
       categories: [], // Clean empty default as requested
       topics: [],
     );

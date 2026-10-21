@@ -32,6 +32,7 @@ Unlike bloated flashcard apps, Retain is built with an **Apple Journal native ae
 - 🎨 **Apple Journal Native UI**: Elegant dark & light modes with pastel cards (lavender, sage, peach, sky blue), `CupertinoIcons`, and smooth native micro-interactions.
 - 📱 **Adaptive Native Experience**: Automatically renders Cupertino modals and pickers on iOS, and Material 3 adaptive dialogs on Android.
 - 🔔 **Smart Local Push Notifications**: Exact offline alarms scheduled at the review timestamp (`flutter_local_notifications`), automatically refreshed or cancelled on topic updates.
+- 🌙 **Sleep Schedule & Quiet Hours**: Configurable bedtime and wake-up times (e.g. 23:00 to 07:00). Reviews falling during sleep hours automatically shift to your morning wake-up time, avoiding any middle-of-the-night interruptions.
 - 🗂 **Categories & Topic Management**: Organize by subject (e.g. *Languages*, *Algorithms*, *Medicine*, *History*). Reset progress or delete items at any time.
 - 🔒 **100% Privacy & Local Storage**: No accounts, no cloud tracking, no analytics. All data is saved strictly in your device sandbox as human-readable JSON.
 - 💾 **Easy Backup & Export/Import**: One-tap export via system share sheet (`share_plus` / Files app integration via `UIFileSharingEnabled`) and JSON backup restore (`file_picker`).
@@ -66,6 +67,7 @@ Human memory decays rapidly after learning new material (the *Forgetting Curve* 
 - **Эстетика Apple Journal**: пастельные акцентные карточки (шалфей, лаванда, персик, небесный), крупные скругления `BorderRadius.circular(22)`, нативные Cupertino-иконки.
 - **100% Офлайн и Приватность**: отсутствие регистрации и серверов. Данные хранятся локально в песочнице устройства. Поддерживается сохранение и восстановление резервной копии в JSON через системное приложение «Файлы».
 - **Умные локальные пуши**: точные напоминания в момент наступления срока повторения.
+- **Режим сна и тихие часы**: настройка расписания сна (по умолчанию 23:00 – 07:00). Ночные повторения автоматически переносятся на утро, чтобы напоминания не будили вас ночью.
 - **Поддержка двух языков**: английский (по умолчанию) и русский с переключением в один клик.
 
 ---

@@ -1,3 +1,5 @@
+import 'sleep_schedule.dart';
+
 class ReviewIntervals {
   ReviewIntervals._();
 
@@ -42,8 +44,18 @@ class ReviewIntervals {
   }
 
   /// Calculates the next review time for a given step starting from [baseTime] (defaults to DateTime.now()).
-  static DateTime calculateNextReview(int step, {DateTime? baseTime}) {
+  /// If [sleepSchedule] is provided and enabled, the calculated time is adjusted so reviews never fall
+  /// during sleep hours (shifted to morning wake-up time).
+  static DateTime calculateNextReview(
+    int step, {
+    DateTime? baseTime,
+    SleepSchedule? sleepSchedule,
+  }) {
     final start = baseTime ?? DateTime.now();
-    return start.add(durationForStep(step));
+    final rawTime = start.add(durationForStep(step));
+    if (sleepSchedule != null && sleepSchedule.isEnabled) {
+      return sleepSchedule.adjust(rawTime);
+    }
+    return rawTime;
   }
 }
