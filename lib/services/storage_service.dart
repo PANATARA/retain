@@ -67,13 +67,13 @@ class StorageService {
     final xFile = XFile(
       file.path,
       mimeType: 'application/json',
-      name: 'ebbinghaus_backup_${DateTime.now().toIso8601String().substring(0, 10)}.json',
+      name: 'retain_backup_${DateTime.now().toIso8601String().substring(0, 10)}.json',
     );
 
     await SharePlus.instance.share(
       ShareParams(
         files: [xFile],
-        subject: 'Резервная копия Ebbinghaus Planner',
+        subject: 'Retain Backup',
         sharePositionOrigin: sharePositionOrigin,
       ),
     );

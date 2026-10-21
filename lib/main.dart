@@ -40,7 +40,7 @@ class EbbinghausPlannerApp extends StatelessWidget {
     final isM3 = state.visualTheme == AppVisualTheme.material3;
 
     return MaterialApp(
-      title: 'Ebbinghaus Planner',
+      title: 'Retain',
       debugShowCheckedModeBanner: false,
       theme: isM3 ? AppTheme.material3Light : AppTheme.appleJournalLight,
       darkTheme: isM3 ? AppTheme.material3Dark : AppTheme.appleJournalDark,

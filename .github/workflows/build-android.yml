@@ -52,20 +52,20 @@ jobs:
 
       - name: Prepare APK Artifact
         run: |
-          cp build/app/outputs/flutter-apk/app-release.apk build/app/outputs/flutter-apk/ebbplan-release.apk
+          cp build/app/outputs/flutter-apk/app-release.apk build/app/outputs/flutter-apk/retain-release.apk
 
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: ebbplan-android-apk
-          path: build/app/outputs/flutter-apk/ebbplan-release.apk
+          name: retain-android-apk
+          path: build/app/outputs/flutter-apk/retain-release.apk
           retention-days: 14
 
       - name: Create GitHub Release (on tag)
         if: startsWith(github.ref, 'refs/tags/v')
         uses: softprops/action-gh-release@v2
         with:
-          files: build/app/outputs/flutter-apk/ebbplan-release.apk
+          files: build/app/outputs/flutter-apk/retain-release.apk
           draft: false
           prerelease: false
           generate_release_notes: true

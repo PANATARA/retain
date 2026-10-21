@@ -48,21 +48,21 @@ jobs:
           mkdir -p build/ios/ipa/Payload
           cp -r build/ios/iphoneos/Runner.app build/ios/ipa/Payload/
           cd build/ios/ipa
-          zip -r -9 ebbplan-unsigned.ipa Payload
-          ls -lh ebbplan-unsigned.ipa
+          zip -r -9 retain-unsigned.ipa Payload
+          ls -lh retain-unsigned.ipa
 
       - name: Upload IPA Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: ebbplan-ios-unsigned
-          path: build/ios/ipa/ebbplan-unsigned.ipa
+          name: retain-ios-unsigned
+          path: build/ios/ipa/retain-unsigned.ipa
           retention-days: 14
 
       - name: Create GitHub Release (on tag)
         if: startsWith(github.ref, 'refs/tags/v')
         uses: softprops/action-gh-release@v2
         with:
-          files: build/ios/ipa/ebbplan-unsigned.ipa
+          files: build/ios/ipa/retain-unsigned.ipa
           draft: false
           prerelease: false
           generate_release_notes: true

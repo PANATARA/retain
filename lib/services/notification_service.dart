@@ -142,7 +142,7 @@ class NotificationService {
     try {
       await _notificationsPlugin.zonedSchedule(
         id: topic.notificationId,
-        title: 'Ebbinghaus Planner',
+        title: 'Retain',
         body: notificationBody,
         scheduledDate: tzDateTime,
         notificationDetails: notificationDetails,
